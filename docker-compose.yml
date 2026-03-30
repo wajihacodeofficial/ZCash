@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  easypay-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: easypay-frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    # environment:
+    #   # If using Supabase locally via CLI (Supabase start), point the Next.js container to the host's exposed API gateway
+    #   - NEXT_PUBLIC_SUPABASE_URL=http://host.docker.internal:54321
+    networks:
+      - easypay-network
+
+networks:
+  easypay-network:
+    driver: bridge

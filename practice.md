@@ -1,0 +1,1 @@
+background: var(--bg-card); border: 1px solid var(--border); border-radius: 28px; padding: 24px; position: relative;

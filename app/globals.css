@@ -1,0 +1,220 @@
+/* ═══════════════════════════════════════════
+   EasyPay — Global Styles
+   Light theme default, Dark via [data-theme='dark']
+═══════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-light:   #0d0b10;
+  --bg-card:    #181520;
+  --border:     rgba(255,255,255,0.08);
+  --blue-text:  #F39C12;
+  --green-text: #22c55e;
+  --text-dark:  #ffffff;
+  --text-muted: #88889a;
+  --shadow:     0 4px 20px rgba(0,0,0,0.4);
+}
+
+/* ── Base ── */
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #1c1c1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ── Phone Frame: 350×760 on desktop (10% smaller) ── */
+.app-container {
+  width: 350px;
+  height: 760px;
+  position: relative;
+  background: var(--bg-light);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 44px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.08);
+  border: 4px solid #111;
+  transition: background 0.3s ease;
+}
+
+/* Full-screen on real mobile */
+@media (max-width: 430px) {
+  html, body { background: var(--bg-light); display: block; }
+  .app-container {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* Admin override */
+.app-container:has(.admin-root) {
+  width: 100vw; height: 100dvh;
+  border-radius: 0; box-shadow: none; overflow: auto;
+}
+body:has(.admin-root) { display: block; overflow: auto; }
+
+/* ── Auth screens ── */
+.auth-screen {
+  min-height: 100%; width: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 40px 24px;
+  background: var(--bg-light); color: var(--text-dark);
+}
+.auth-logo {
+  background: linear-gradient(135deg, #F39C12, #D68910);
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 20px; color: #000; margin-bottom: 24px;
+}
+.auth-header { text-align: center; margin-bottom: 32px; }
+.auth-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark); }
+.auth-header p { font-size: 14px; color: var(--text-muted); }
+.auth-form { width: 100%; display: flex; flex-direction: column; gap: 16px; }
+.auth-input-group { position: relative; width: 100%; }
+.auth-input-group input {
+  width: 100%; background: rgba(255,255,255,0.05);
+  border: 1.5px solid rgba(255,255,255,0.1); border-radius: 12px;
+  padding: 16px 16px 16px 48px; color: #fff;
+  font-size: 15px; outline: none; transition: border-color 0.2s;
+  font-family: inherit;
+}
+.auth-input-group input:focus { border-color: #F39C12; }
+.auth-input-group input::placeholder { color: #666; }
+.auth-input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #666; }
+.auth-btn {
+  background: linear-gradient(135deg, #F39C12, #D68910);
+  border: none; border-radius: 12px; padding: 16px;
+  font-weight: 700; font-size: 16px; color: #000;
+  cursor: pointer; margin-top: 8px; font-family: inherit;
+}
+.auth-btn:active { transform: scale(0.98); opacity: 0.9; }
+.auth-footer { margin-top: 24px; text-align: center; font-size: 14px; color: #999; }
+.auth-link { color: #F39C12; text-decoration: none; font-weight: 700; }
+
+/* ── Scrollbar hide ── */
+::-webkit-scrollbar { width: 0; background: transparent; }
+
+/* ── Click feedback ── */
+.clicky { cursor: pointer; transition: transform 0.15s, opacity 0.15s; user-select: none; }
+.clicky:active { transform: scale(0.95); opacity: 0.8; }
+
+/* ── Notification panel animations ── */
+@keyframes fadeIn  { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideUp { from { transform: translateY(40%); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+
+/* ── Global Dropdown / Select Styles ── */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2388889a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 10px;
+  cursor: pointer;
+  outline: none !important;
+  color-scheme: dark; /* Forces browser context menu to stay dark */
+}
+
+select:focus {
+  border-color: var(--blue-text) !important;
+  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
+}
+
+option {
+  background: #181520; /* Matches --bg-card */
+  color: #fff;
+  padding: 12px;
+}
+
+/* ── System Modal ── */
+.system-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease;
+}
+
+.system-modal {
+  background: var(--bg-card);
+  width: 100%;
+  max-width: 320px;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.system-modal-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: rgba(243,156,18,0.1);
+  color: var(--blue-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.system-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.system-modal-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.system-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.system-modal-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.system-modal-confirm {
+  background: var(--blue-text);
+  color: #000;
+}
+
+.system-modal-cancel {
+  background: rgba(255,255,255,0.05);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.system-modal-btn:active {
+  opacity: 0.8;
+}
