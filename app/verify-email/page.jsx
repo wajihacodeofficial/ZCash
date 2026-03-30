@@ -86,21 +86,12 @@ function VerifyEmailContent() {
       animation: 'fadeIn 0.6s ease-out',
       textAlign: 'center'
     }}>
-      <div className="auth-logo" style={{ 
-        background: 'linear-gradient(135deg, #0070f3, #00c6ff)', 
-        width: '64px', 
-        height: '64px', 
-        borderRadius: '20px', 
-        fontSize: '24px', 
-        fontWeight: '900', 
-        margin: '0 auto 32px', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        color: '#fff',
-        boxShadow: '0 8px 20px rgba(0, 112, 243, 0.2)'
-      }}>
-        EP
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
+        <img 
+          src="/logo.png" 
+          alt="EasyPay" 
+          style={{ width: '82px', height: '82px', objectFit: 'contain' }} 
+        />
       </div>
 
       <h1 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '12px', color: '#1A202C' }}>
