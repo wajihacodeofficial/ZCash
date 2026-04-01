@@ -48,6 +48,17 @@ export default function ProfileTab({ userProfile, setNotifOpen, unreadCount, onA
   const [history, setHistory] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
 
+  // Edit Profile states
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({ 
+    full_name: userProfile?.full_name || '', 
+    phone_number: userProfile?.phone_number || '',
+    country: userProfile?.country || ''
+  });
+
+  // Rank Modal state
+  const [showRankModal, setShowRankModal] = useState(false);
+
   useEffect(() => {
     if (userProfile?.id) {
       fetchHistory();
@@ -121,6 +132,14 @@ export default function ProfileTab({ userProfile, setNotifOpen, unreadCount, onA
     } finally {
       setLoading(false);
     }
+  };
+
+  const calculateRank = (invested) => {
+    const amount = Number(invested || 0);
+    if (amount >= 500) return { name: 'DIAMOND', color: '#b9f2ff', next: null, min: 500 };
+    if (amount >= 200) return { name: 'GOLD', color: '#FFD700', next: 'DIAMOND', nextMin: 500, min: 200 };
+    if (amount >= 50) return { name: 'SILVER', color: '#C0C0C0', next: 'GOLD', nextMin: 200, min: 50 };
+    return { name: 'BRONZE', color: '#CD7F32', next: 'SILVER', nextMin: 50, min: 0 };
   };
 
   const handleSupport = () => {
@@ -246,6 +265,49 @@ export default function ProfileTab({ userProfile, setNotifOpen, unreadCount, onA
           </div>
         )}
 
+        {/* Edit Profile Form */}
+        {isEditing && (
+          <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid var(--border)', padding: '24px', boxShadow: '0 12px 40px rgba(0,0,0,0.1)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                  <h3 style={{ color: 'var(--text-dark)', fontSize: '18px', fontWeight: '900' }}>Edit Profile</h3>
+                  <X size={20} color="var(--text-muted)" onClick={() => setIsEditing(false)} style={{ cursor: 'pointer' }} />
+              </div>
+              <form onSubmit={handleProfileUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700', paddingLeft: '4px' }}>FULL NAME</label>
+                    <input
+                      type="text" required
+                      value={editForm.full_name} onChange={e => setEditForm({...editForm, full_name: e.target.value})}
+                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: '14px', padding: '14px', color: '#fff', outline: 'none', fontSize: '14px', width: '100%', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700', paddingLeft: '4px' }}>PHONE NUMBER</label>
+                    <input
+                      type="text"
+                      value={editForm.phone_number} onChange={e => setEditForm({...editForm, phone_number: e.target.value})}
+                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: '14px', padding: '14px', color: '#fff', outline: 'none', fontSize: '14px', width: '100%', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: '700', paddingLeft: '4px' }}>COUNTRY</label>
+                    <input
+                      type="text"
+                      value={editForm.country} onChange={e => setEditForm({...editForm, country: e.target.value})}
+                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: '14px', padding: '14px', color: '#fff', outline: 'none', fontSize: '14px', width: '100%', boxSizing: 'border-box' }}
+                    />
+                  </div>
+                  <button
+                    disabled={loading}
+                    type="submit"
+                    style={{ background: 'var(--blue-text)', color: '#000', border: 'none', borderRadius: '16px', padding: '16px', fontWeight: '900', marginTop: '8px', fontSize: '15px' }}
+                  >
+                    {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+              </form>
+          </div>
+        )}
+
         {/* Verification Alert */}
         {userProfile && !userProfile.email_confirmed_at && (
           <div style={{ background: 'rgba(239, 68, 68, 0.05)', borderRadius: '24px', border: '1px dashed rgba(239, 68, 68, 0.3)', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '8px' }}>
@@ -355,11 +417,11 @@ export default function ProfileTab({ userProfile, setNotifOpen, unreadCount, onA
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ background: 'var(--bg-card)', borderRadius: '28px', border: '1px solid var(--border)', overflow: 'hidden', boxShadow: '0 8px 30px rgba(0,0,0,0.05)' }}>
               {[
-                { Icon: Users,           label: 'My Teams',             color: '#3498DB', action: () => showToast('Team structure view coming soon!', 'info') },
-                { Icon: Trophy,          label: 'Rank & Rewards',       color: '#F1C40F', action: () => showToast('Ranks and achievements coming soon!', 'info') },
+                { Icon: Users,           label: 'My Teams',             color: '#3498DB', action: () => router.push('/teams') },
+                { Icon: Trophy,          label: 'Rank & Rewards',       color: '#F1C40F', action: () => setShowRankModal(true) },
                 { Icon: History,         label: 'Transaction History',   color: '#2ECC71', action: () => router.push('/history') },
                 { Icon: ImageIcon,       label: 'Deposit History',       color: '#9B59B6', action: () => router.push('/slips') },
-                { Icon: UserPlus,        label: 'Edit Profile',          color: '#E67E22', action: () => showToast('Edit Profile feature coming soon!', 'info') },
+                { Icon: UserPlus,        label: 'Edit Profile',          color: '#E67E22', action: () => setIsEditing(true) },
                 { Icon: Lock,            label: 'Change Password',       color: '#3498DB', action: () => setIsChangingPass(true) },
                 { Icon: ShieldCheck,     label: '2FA Security',         color: '#2ECC71', action: () => showToast('2FA coming soon!', 'info') },
                 { Icon: MessageSquare,   label: 'Message Admin',         color: '#1ABC9C', action: () => router.push('/dashboard/messages') },
@@ -422,6 +484,13 @@ export default function ProfileTab({ userProfile, setNotifOpen, unreadCount, onA
             </div>
           </div>
         )}
+        {/* Rank Modal call */}
+        <RankModal 
+          isOpen={showRankModal} 
+          onClose={() => setShowRankModal(false)} 
+          totalInvested={userProfile?.total_invested || 0}
+          calculateRank={calculateRank}
+        />
       </div>
 
       <style jsx>{`
@@ -436,4 +505,49 @@ export default function ProfileTab({ userProfile, setNotifOpen, unreadCount, onA
       `}</style>
     </section>
   );
+}
+
+function RankModal({ isOpen, onClose, totalInvested, calculateRank }) {
+  if (!isOpen) return null;
+  const rank = calculateRank(totalInvested);
+  const progress = rank.next ? (totalInvested / rank.nextMin) * 100 : 100;
+
+  return (
+    <div className="system-modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
+      <div style={{ background: '#181520', width: '90%', maxWidth: '340px', borderRadius: '32px', border: '1px solid var(--border)', padding: '32px 24px', textAlign: 'center', position: 'relative' }}>
+        <X size={20} color="var(--text-muted)" onClick={onClose} style={{ position: 'absolute', right: '20px', top: '20px', cursor: 'pointer' }} />
+        
+        <div style={{ width: '80px', height: '80px', background: `${rank.color}15`, borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: `1px solid ${rank.color}30` }}>
+          <Trophy size={40} color={rank.color} />
+        </div>
+        
+        <h3 style={{ fontSize: '24px', fontWeight: '900', color: '#fff', margin: '0 0 4px' }}>{rank.name} TIER</h3>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '24px' }}>Total Invested: ${Number(totalInvested).toFixed(2)}</p>
+        
+        <div style={{ textAlign: 'left', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <span style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)' }}>PROGRESS TO {rank.next || 'MAX'}</span>
+            <span style={{ fontSize: '11px', fontWeight: '900', color: rank.color }}>{progress.toFixed(0)}%</span>
+          </div>
+          <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ width: `${progress}%`, height: '100%', background: rank.color, transition: 'width 0.5s ease' }} />
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {[
+            { name: 'BRONZE', min: '$0+' },
+            { name: 'SILVER', min: '$50+' },
+            { name: 'GOLD', min: '$200+' },
+            { name: 'DIAMOND', min: '$500+' }
+          ].map(r => (
+            <div key={r.name} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 16px', borderRadius: '14px', background: rank.name === r.name ? 'rgba(255,255,255,0.05)' : 'transparent', border: rank.name === r.name ? '1px solid var(--border)' : 'none' }}>
+              <span style={{ color: rank.name === r.name ? '#fff' : 'var(--text-muted)', fontSize: '13px', fontWeight: '800' }}>{r.name}</span>
+              <span style={{ color: rank.name === r.name ? 'var(--blue-text)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '700' }}>{r.min}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
