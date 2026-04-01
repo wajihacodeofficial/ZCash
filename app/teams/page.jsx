@@ -69,7 +69,7 @@ export default function TeamsPage() {
         .select('*')
         .eq('user_id', user.id)
         .eq('status', 'pending')
-        .single();
+        .maybeSingle();
     
     if (requests) setRequestStatus(requests);
 

@@ -90,7 +90,7 @@ export default function AdminTeamsPage() {
             name: req.team_name,
             owner_id: req.user_id,
             status: 'approved'
-        }).select().single();
+        }).select().maybeSingle();
 
         if (teamErr) { showAction("Error creating team: " + teamErr.message); return; }
 
