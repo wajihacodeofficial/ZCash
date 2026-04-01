@@ -134,6 +134,32 @@ export default function ProfileTab({ userProfile, setNotifOpen, unreadCount, onA
     }
   };
 
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: editForm.full_name,
+          phone_number: editForm.phone_number,
+          country: editForm.country,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userProfile.id);
+
+      if (error) throw error;
+      showToast('Profile updated successfully!');
+      setIsEditing(false);
+      // Refresh the page or the specific profile data if possible
+      window.location.reload(); 
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const calculateRank = (invested) => {
     const amount = Number(invested || 0);
     if (amount >= 500) return { name: 'DIAMOND', color: '#b9f2ff', next: null, min: 500 };
