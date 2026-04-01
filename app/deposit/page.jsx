@@ -212,7 +212,7 @@ function DepositContent() {
           {['JazzCash', 'EasyPaisa', 'Bank Transfer'].map((m) => (
             <div key={m} onClick={() => { setPaymentMethod(m); setStep(2); }} className="clicky" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
               <div style={{ background: 'rgba(243, 156, 18, 0.1)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F39C12', overflow: 'hidden' }}>
-                {m === 'JazzCash' ? <img src="WhatsApp Image 2026-03-30 at 14.19.07 (1)" alt="JazzCash" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
+                {m === 'JazzCash' ? <img src="/WhatsApp Image 2026-03-30 at 14.19.07 (1)" alt="JazzCash" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
                  m === 'EasyPaisa' ? <img src="/WhatsApp Image 2026-03-30 at 14.19.07.jpeg" alt="EasyPaisa" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
                  <CreditCard size={24} />}
               </div>
