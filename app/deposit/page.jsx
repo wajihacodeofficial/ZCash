@@ -24,10 +24,12 @@ function DepositContent() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({ text: '', type: '' });
   const [planName, setPlanName] = useState('');
+  const [loadingPlan, setLoadingPlan] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
     if (planId) {
+      setLoadingPlan(true);
       const fetchPlan = async () => {
         const { data } = await supabase
           .from('plans')
@@ -39,6 +41,7 @@ function DepositContent() {
           // Auto-set the amount if it's not already provided in the URL
           if (!amount) setAmount(data.price_usd.toString());
         }
+        setLoadingPlan(false);
       };
       fetchPlan();
     }
@@ -146,6 +149,16 @@ function DepositContent() {
     setLoading(false);
   };
 
+  const handleMethodSelect = (m) => {
+    setMsg({ text: '', type: '' });
+    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+      setMsg({ text: 'Please enter a valid amount first.', type: 'error' });
+      return;
+    }
+    setPaymentMethod(m);
+    setStep(2);
+  };
+
   const renderStep1 = () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', gap: '8px' }}>
@@ -219,13 +232,13 @@ function DepositContent() {
         </h3>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {['JazzCash', 'EasyPaisa', 'Bank Transfer'].map((m) => (
-            <div key={m} onClick={() => { setPaymentMethod(m); setStep(2); }} className="clicky" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}>
+            <div key={m} onClick={() => handleMethodSelect(m)} className="clicky" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '20px', padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', opacity: loadingPlan ? 0.6 : 1, pointerEvents: loadingPlan ? 'none' : 'auto' }}>
               <div style={{ background: 'rgba(243, 156, 18, 0.1)', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F39C12', overflow: 'hidden' }}>
                 {m === 'JazzCash' ? <img src="/jazzcash.jpeg" alt="JazzCash" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
                  m === 'EasyPaisa' ? <img src="/easypaisa.jpeg" alt="EasyPaisa" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
                  <CreditCard size={24} />}
               </div>
-              <div style={{ flex: 1 }}><h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '4px', fontWeight: '700' }}>{m}</h4><p style={{ color: 'var(--text-muted)', fontSize: '13px', margin: 0 }}>Send payment to this account</p></div>
+              <div style={{ flex: 1 }}><h4 style={{ color: 'var(--text-dark)', fontSize: '16px', marginBottom: '4px', fontWeight: '700' }}>{m}</h4><p style={{ color: 'var(--text-muted)', fontSize: '13px', margin: 0 }}>{loadingPlan ? 'Loading price...' : 'Send payment to this account'}</p></div>
             </div>
           ))}
         </div>
@@ -475,7 +488,7 @@ function DepositContent() {
                 msg.type === 'error'
                   ? 'rgba(239,68,68,0.1)'
                   : 'rgba(34,197,94,0.1)',
-              color: msg.type === 'error' ? '#ef4444' : 'var(--green-text)',
+              color: msg.type === 'error' ? '#ef4444' : '#22c55e',
               fontSize: '14px',
               fontWeight: '600',
               textAlign: 'center',
@@ -508,7 +521,10 @@ function DepositContent() {
   return (
     <PageWrapper
       title={planId ? `Activate Plan` : 'Deposit'}
-      onBack={() => (step === 2 ? setStep(1) : router.push('/'))}
+      onBack={() => {
+        setMsg({ text: '', type: '' });
+        step === 2 ? setStep(1) : router.push('/');
+      }}
       showNavbar={true}
       activeTab="home"
     >
