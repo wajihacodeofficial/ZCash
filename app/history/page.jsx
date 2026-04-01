@@ -4,6 +4,7 @@ import { createClient } from '../../lib/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Search, Filter, Calendar, Plus, Minus, Info, ArrowUpRight, ArrowDownLeft, Loader2 } from 'lucide-react';
 import TabHeader from '../../components/TabHeader';
+import PageWrapper from '../../components/PageWrapper';
 
 function HistoryInner() {
   const router = useRouter();
@@ -86,22 +87,13 @@ function HistoryInner() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-light)', paddingBottom: '40px' }}>
-      <TabHeader 
-        title="TRANSACTIONS" 
-        showActions={false} 
-        userProfile={userProfile} 
-        onAvatarClick={() => router.push('/profile')} 
-      />
-      
+    <PageWrapper 
+      title="TRANSACTIONS" 
+      showNavbar={true} 
+      activeTab="profile"
+      onBack={() => router.back()}
+    >
       <div style={{ padding: '20px 16px' }}>
-        <button 
-          onClick={() => router.back()}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'var(--blue-text)', fontWeight: '800', fontSize: '14px', marginBottom: '24px', cursor: 'pointer' }}
-        >
-          <ArrowLeft size={18} /> BACK
-        </button>
-
         <div style={{ background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border)', padding: '20px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* Search */}
@@ -228,7 +220,7 @@ function HistoryInner() {
         .spin { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
-    </div>
+    </PageWrapper>
   );
 }
 

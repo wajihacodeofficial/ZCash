@@ -15,6 +15,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { createClient } from '../../lib/supabase/client';
+import PageWrapper from '../../components/PageWrapper';
 
 export default function TeamsPage() {
   const router = useRouter();
@@ -228,33 +229,31 @@ export default function TeamsPage() {
   if (loading) return <div className="admin-spinner-wrap"><div className="admin-spinner" /></div>;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-light)', paddingBottom: '110px' }}>
-      
-      {/* Header Area */}
-      <div style={{ padding: '24px 24px 10px', background: 'var(--bg-card)', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <button onClick={() => router.push('/')} style={{ background: 'transparent', border: 'none', color: 'var(--blue-text)', fontSize: '15px', fontWeight: '800', cursor: 'pointer' }}>← Back</button>
-            <h2 style={{ fontSize: '18px', fontWeight: '900', color: 'var(--text-dark)' }}>TEAM HUB</h2>
-            <div style={{ width: '40px' }} />
-        </div>
-
+    <PageWrapper 
+      title="TEAM HUB" 
+      showNavbar={true} 
+      activeTab="invite"
+      onBack={() => router.push('/')}
+    >
+      {/* Tab Switcher Area */}
+      <div style={{ padding: '16px 20px 10px', background: 'var(--bg-card)', borderBottom: '1px solid var(--border)' }}>
         {myTeam ? (
             <div style={{ display: 'flex', gap: '8px', padding: '4px', background: 'var(--bg-light)', borderRadius: '14px' }}>
                 <button 
                   onClick={() => setActiveView('my-team')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: activeView === 'my-team' ? 'var(--bg-card)' : 'transparent', color: activeView === 'my-team' ? 'var(--blue-text)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '800', transition: '0.2s', boxShadow: activeView === 'my-team' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: activeView === 'my-team' ? 'var(--bg-card)' : 'transparent', color: activeView === 'my-team' ? 'var(--blue-text)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '800', transition: '0.2s' }}
                 >
                     STATUS
                 </button>
                 <button 
                   onClick={() => setActiveView('chat')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: activeView === 'chat' ? 'var(--bg-card)' : 'transparent', color: activeView === 'chat' ? 'var(--blue-text)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '800', transition: '0.2s', boxShadow: activeView === 'chat' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: activeView === 'chat' ? 'var(--bg-card)' : 'transparent', color: activeView === 'chat' ? 'var(--blue-text)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '800', transition: '0.2s' }}
                 >
                     CHAT
                 </button>
                 <button 
                   onClick={() => setActiveView('list')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: activeView === 'list' ? 'var(--bg-card)' : 'transparent', color: activeView === 'list' ? 'var(--blue-text)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '800', transition: '0.2s', boxShadow: activeView === 'list' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none' }}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: activeView === 'list' ? 'var(--bg-card)' : 'transparent', color: activeView === 'list' ? 'var(--blue-text)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '800', transition: '0.2s' }}
                 >
                     DISCOVER
                 </button>
@@ -467,6 +466,6 @@ export default function TeamsPage() {
         )}
 
       </div>
-    </div>
+    </PageWrapper>
   );
 }

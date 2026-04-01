@@ -4,6 +4,7 @@ import { createClient } from '../../lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Image as ImageIcon, Calendar, ExternalLink, Search, Loader2 } from 'lucide-react';
 import TabHeader from '../../components/TabHeader';
+import PageWrapper from '../../components/PageWrapper';
 
 export default function SlipsPage() {
   const router = useRouter();
@@ -61,22 +62,13 @@ export default function SlipsPage() {
   });
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-light)', paddingBottom: '40px' }}>
-      <TabHeader 
-        title="DEPOSIT SLIPS" 
-        showActions={false} 
-        userProfile={userProfile} 
-        onAvatarClick={() => router.push('/profile')} 
-      />
-      
+    <PageWrapper 
+      title="DEPOSIT SLIPS" 
+      showNavbar={true} 
+      activeTab="profile"
+      onBack={() => router.back()}
+    >
       <div style={{ padding: '20px 16px' }}>
-        <button 
-          onClick={() => router.back()}
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'var(--blue-text)', fontWeight: '800', fontSize: '14px', marginBottom: '24px', cursor: 'pointer' }}
-        >
-          <ArrowLeft size={18} /> BACK
-        </button>
-
         <div style={{ position: 'relative', marginBottom: '20px' }}>
           <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
           <input 
@@ -143,6 +135,6 @@ export default function SlipsPage() {
         .spin { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
-    </div>
+    </PageWrapper>
   );
 }
