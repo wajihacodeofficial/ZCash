@@ -34,6 +34,7 @@ export default function TeamsPage() {
   const [memberNote, setMemberNote] = useState('');
   const [updatingTeam, setUpdatingTeam] = useState(false);
   const [submittingMemberReq, setSubmittingMemberReq] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const scrollRef = useRef(null);
 
   const fetchData = async () => {
@@ -133,7 +134,8 @@ export default function TeamsPage() {
     else {
         alert("Team creation request sent to Admin for approval.");
         fetchData();
-        setActiveView('list');
+        setShowCreateModal(false);
+        setTeamNameForm('');
     }
   };
 
@@ -267,14 +269,73 @@ export default function TeamsPage() {
                     ALL TEAMS
                 </button>
                 <button 
-                  onClick={() => setActiveView('create')}
-                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: activeView === 'create' ? 'var(--bg-card)' : 'transparent', color: activeView === 'create' ? 'var(--blue-text)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '800' }}
+                  onClick={() => setShowCreateModal(true)}
+                  style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: 'transparent', color: 'var(--blue-text)', fontSize: '12px', fontWeight: '800' }}
                 >
                     NEW TEAM
                 </button>
             </div>
         )}
       </div>
+
+      {/* TEAM CREATION MODAL */}
+      {showCreateModal && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div 
+              onClick={() => setShowCreateModal(false)}
+              style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }} 
+            />
+            <div style={{ position: 'relative', width: '100%', maxWidth: '400px', background: 'var(--bg-card)', borderRadius: '32px', border: '1px solid var(--border)', overflow: 'hidden', animation: 'modalIn 0.3s ease-out' }}>
+                <style>{`
+                    @keyframes modalIn {
+                        from { opacity: 0; transform: scale(0.95) translateY(10px); }
+                        to { opacity: 1; transform: scale(1) translateY(0); }
+                    }
+                `}</style>
+                <div style={{ padding: '30px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+                        <div style={{ width: '44px', height: '44px', background: 'rgba(79,142,247,0.1)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--blue-text)' }}>
+                            <Plus size={22} />
+                        </div>
+                        <button 
+                          onClick={() => setShowCreateModal(false)}
+                          style={{ background: 'var(--bg-light)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                            <Trash2 size={16} />
+                        </button>
+                    </div>
+
+                    <h3 style={{ fontSize: '20px', fontWeight: '900', color: 'var(--text-dark)', marginBottom: '8px' }}>Form New Team</h3>
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '25px' }}>Become a Team Head and lead your squad to victory.</p>
+
+                    {requestStatus ? (
+                        <div style={{ background: 'var(--bg-light)', padding: '20px', borderRadius: '20px', textAlign: 'center' }}>
+                            <History size={24} color="var(--blue-text)" style={{ marginBottom: '10px' }} />
+                            <p style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-dark)' }}>Request Pending</p>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Admin is reviewing your request for "{requestStatus.team_name}".</p>
+                        </div>
+                    ) : (
+                        <form onSubmit={handleCreateTeam}>
+                            <div style={{ marginBottom: '25px' }}>
+                                <label style={{ fontSize: '11px', fontWeight: '900', color: 'var(--text-muted)', display: 'block', marginBottom: '10px' }}>TEAM NAME</label>
+                                <input 
+                                  required 
+                                  type="text" 
+                                  value={teamNameForm} 
+                                  onChange={e => setTeamNameForm(e.target.value)}
+                                  placeholder="e.g. Thunder Squad ⚡" 
+                                  style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '2px solid var(--border)', background: 'var(--bg-light)', color: 'var(--text-dark)', fontWeight: '700', outline: 'none', transition: '0.2s' }}
+                                />
+                            </div>
+                            <button type="submit" style={{ width: '100%', padding: '18px', borderRadius: '20px', border: 'none', background: 'var(--blue-text)', color: '#fff', fontSize: '14px', fontWeight: '900', boxShadow: '0 8px 24px rgba(79,142,247,0.3)' }}>
+                                CREATE REQUEST
+                            </button>
+                        </form>
+                    )}
+                </div>
+            </div>
+        </div>
+      )}
 
       <div style={{ padding: '20px' }}>
         
@@ -427,41 +488,11 @@ export default function TeamsPage() {
             </div>
         )}
 
-        {/* VIEW: Create Team */}
+        {/* VIEW: Placeholder for inline create (no longer used directly) */}
         {activeView === 'create' && (
-            <div style={{ background: 'var(--bg-card)', padding: '30px', borderRadius: '32px', border: '1px solid var(--border)' }}>
-                <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-                    <div style={{ width: '50px', height: '50px', background: 'rgba(79,142,247,0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px', color: 'var(--blue-text)' }}>
-                        <Plus size={24} />
-                    </div>
-                    <h3 style={{ fontSize: '18px', fontWeight: '900', color: 'var(--text-dark)' }}>Form New Team</h3>
-                    <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>Once approved, you will become the Team Head.</p>
-                </div>
-
-                {requestStatus ? (
-                    <div style={{ background: 'var(--bg-light)', padding: '20px', borderRadius: '20px', textAlign: 'center' }}>
-                        <History size={24} color="var(--blue-text)" style={{ marginBottom: '10px' }} />
-                        <p style={{ fontSize: '14px', fontWeight: '800', color: 'var(--text-dark)' }}>Request Pending</p>
-                        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Admin is reviewing your request for "{requestStatus.team_name}".</p>
-                    </div>
-                ) : (
-                    <form onSubmit={handleCreateTeam}>
-                        <div style={{ marginBottom: '20px' }}>
-                            <label style={{ fontSize: '11px', fontWeight: '900', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>TEAM NAME</label>
-                            <input 
-                              required 
-                              type="text" 
-                              value={teamNameForm} 
-                              onChange={e => setTeamNameForm(e.target.value)}
-                              placeholder="e.g. Phoenix Rockets 🚀" 
-                              style={{ width: '100%', padding: '14px', borderRadius: '14px', border: '2px solid var(--border)', background: 'var(--bg-light)', fontWeight: '700', outline: 'none' }}
-                            />
-                        </div>
-                        <button type="submit" style={{ width: '100%', padding: '16px', borderRadius: '18px', border: 'none', background: 'var(--blue-text)', color: '#fff', fontSize: '14px', fontWeight: '900', boxShadow: '0 8px 24px rgba(79,142,247,0.3)' }}>
-                            Submit Request
-                        </button>
-                    </form>
-                )}
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+                <p style={{ color: 'var(--text-muted)' }}>Please use the New Team button above.</p>
+                <button onClick={() => setShowCreateModal(true)} style={{ marginTop: '10px', padding: '10px 20px', borderRadius: '10px', border: 'none', background: 'var(--blue-text)', color: '#fff', fontWeight: '800' }}>Open Formation Form</button>
             </div>
         )}
 
