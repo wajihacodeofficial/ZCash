@@ -58,7 +58,7 @@ export default function TeamsPage() {
 
     const { data: teams } = await supabase
       .from('teams')
-      .select('*')
+      .select('id, name, total_deposit, live_profit, score, status, owner_id')
       .eq('status', 'approved')
       .order('score', { ascending: false });
 
