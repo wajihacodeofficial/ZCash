@@ -31,14 +31,18 @@ function DepositContent() {
       const fetchPlan = async () => {
         const { data } = await supabase
           .from('plans')
-          .select('name')
+          .select('name, price_usd')
           .eq('id', planId)
           .single();
-        if (data) setPlanName(data.name);
+        if (data) {
+          setPlanName(data.name);
+          // Auto-set the amount if it's not already provided in the URL
+          if (!amount) setAmount(data.price_usd.toString());
+        }
       };
       fetchPlan();
     }
-  }, [planId, supabase]);
+  }, [planId, supabase, amount]);
 
   const displayAmount = amount ? Number(amount) : 0;
   const pkrAmount = displayAmount * 280;
@@ -78,6 +82,11 @@ function DepositContent() {
     } = await supabase.auth.getUser();
     if (!user) {
       router.push('/login');
+      return;
+    }
+    if (!amount || isNaN(parseFloat(amount))) {
+      setMsg({ text: 'Amount is required.', type: 'error' });
+      setLoading(false);
       return;
     }
     if (parseFloat(amount) < 3 && !planId) {
