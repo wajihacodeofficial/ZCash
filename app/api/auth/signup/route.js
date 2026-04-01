@@ -46,7 +46,7 @@ export async function POST(request) {
       const origin =
         process.env.FRONTEND_URL ||
         request.headers.get('origin') ||
-        'https://EasyPay.vercel.app';
+        'https://z-cash-8jve.vercel.app';
       await fetch(`${origin}/api/auth/send-verification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -22,7 +22,7 @@ export async function POST(request) {
       },
     });
 
-    const baseUrl = process.env.FRONTEND_URL || 'https://EasyPay.vercel.app';
+    const baseUrl = process.env.FRONTEND_URL || 'https://z-cash-8jve.vercel.app';
     const verificationLink = `${baseUrl}/verify-email?token=${token}&email=${encodeURIComponent(email)}`;
 
     const mailOptions = {

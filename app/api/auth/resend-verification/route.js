@@ -34,7 +34,7 @@ export async function POST(request) {
 
     // Generate a new token
     const newToken = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const expiresAt = new Date(Date.now() + 30 * 1000).toISOString(); // 30 seconds expiration
 
     // Upsert the token in email_verifications table (or update existing)
     await supabaseAdmin
@@ -55,7 +55,7 @@ export async function POST(request) {
       },
     });
 
-    const baseUrl = process.env.FRONTEND_URL || 'https://easypay.vercel.app';
+    const baseUrl = process.env.FRONTEND_URL || 'https://z-cash-8jve.vercel.app';
     const verificationLink = `${baseUrl}/verify-email?token=${newToken}&email=${encodeURIComponent(email)}`;
 
     await transporter.sendMail({

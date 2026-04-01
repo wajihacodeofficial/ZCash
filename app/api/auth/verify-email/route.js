@@ -59,8 +59,8 @@ export async function POST(request) {
       const now = new Date().getTime();
       const secondsDiff = Math.floor((now - startTime) / 1000);
       
-      if (secondsDiff > 86400) {
-        return NextResponse.json({ error: 'Verification link expired (24h limit). Please register again.' }, { status: 400 });
+      if (secondsDiff > 30) {
+        return NextResponse.json({ error: 'Verification link expired (30s limit). Please register again.' }, { status: 400 });
       }
     }
 
