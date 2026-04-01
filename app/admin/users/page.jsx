@@ -14,6 +14,9 @@ export default function AdminUsersPage() {
   const [deleteModal, setDeleteModal] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [adminId, setAdminId] = useState(null);
+  const [demoBalanceModal, setDemoBalanceModal] = useState(null);
+  const [demoAmount, setDemoAmount] = useState('');
+  const [isAddingDemo, setIsAddingDemo] = useState(false);
 
   const showAction = (msg, type = 'success') => {
     setActionMsg(msg);
@@ -80,6 +83,35 @@ export default function AdminUsersPage() {
     
     setIsDeleting(false);
     setDeleteModal(null);
+  };
+
+  const handleAddDemoBalance = async (e) => {
+    e.preventDefault();
+    if (!demoBalanceModal?.id || !demoAmount) return;
+    setIsAddingDemo(true);
+    
+    const amount = parseFloat(demoAmount);
+    if (isNaN(amount) || amount <= 0) {
+      showAction('Invalid amount.', 'error');
+      setIsAddingDemo(false);
+      return;
+    }
+
+    const { data: profile } = await supabase.from('profiles').select('demo_balance').eq('id', demoBalanceModal.id).single();
+    const newBal = Number(profile?.demo_balance || 0) + amount;
+    
+    const { error } = await supabase.from('profiles').update({ demo_balance: newBal }).eq('id', demoBalanceModal.id);
+    
+    if (error) {
+      showAction('Error: ' + error.message, 'error');
+    } else {
+      showAction(`Added $${amount} demo balance to ${demoBalanceModal.userName}.`);
+      setUsers(prev => prev.map(u => u.id === demoBalanceModal.id ? { ...u, demo_balance: newBal } : u));
+    }
+    
+    setIsAddingDemo(false);
+    setDemoBalanceModal(null);
+    setDemoAmount('');
   };
 
   const filteredUsers = users.filter(u => {
@@ -165,7 +197,7 @@ export default function AdminUsersPage() {
             <thead>
               <tr>
                 <th>User</th>
-                <th>Balance</th>
+                <th>Bal. / Demo Bal.</th>
                 <th>Joined</th>
                 <th>Role</th>
                 <th style={{ textAlign: 'right' }}>Actions</th>
@@ -188,7 +220,10 @@ export default function AdminUsersPage() {
                     </div>
                   </td>
                   <td>
-                    <span className="admin-amount-pos">${Number(u.balance || 0).toFixed(2)}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span className="admin-amount-pos">${Number(u.balance || 0).toFixed(2)}</span>
+                      <span style={{ fontSize: '11px', color: 'var(--amuted)', fontWeight: 'bold' }}>Demo: ${Number(u.demo_balance || 0).toFixed(2)}</span>
+                    </div>
                   </td>
                   <td>
                     <div className="admin-cell-name">{new Date(u.created_at).toLocaleDateString()}</div>
@@ -202,6 +237,12 @@ export default function AdminUsersPage() {
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                       {!['admin', 'ADMIN', 'SUPERADMIN'].includes(u.role) && (
                         <>
+                          <button
+                            className="admin-btn admin-btn-sm admin-btn-primary"
+                            onClick={() => setDemoBalanceModal({ id: u.id, userName: u.full_name || u.email })}
+                            title="Add Demo Balance">
+                            + Demo Bal
+                          </button>
                           <button
                             className={`admin-btn admin-btn-sm ${u.role === 'banned' ? 'admin-btn-success' : 'admin-btn-secondary'}`}
                             onClick={() => handleToggleUser(u.id, u.role)}
@@ -257,6 +298,50 @@ export default function AdminUsersPage() {
                 Keep User
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Demo Balance Modal */}
+      {demoBalanceModal && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal" style={{ maxWidth: '400px' }}>
+            <div className="admin-modal-header">
+              <h3 className="admin-modal-title">Add Demo Balance</h3>
+              <p className="admin-modal-sub">
+                Top up demo balance for <strong>{demoBalanceModal.userName}</strong>.
+              </p>
+            </div>
+            <form onSubmit={handleAddDemoBalance} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label className="admin-label">Amount ($ Demo)</label>
+                <input 
+                  className="admin-input" 
+                  type="number" 
+                  step="0.01" 
+                  value={demoAmount}
+                  onChange={e => setDemoAmount(e.target.value)} 
+                  required 
+                  placeholder="e.g. 1000"
+                />
+              </div>
+              <div className="admin-modal-actions">
+                <button 
+                  type="submit" 
+                  className="admin-btn admin-btn-primary" 
+                  style={{ flex: 1 }}
+                  disabled={isAddingDemo}>
+                  {isAddingDemo ? 'Adding...' : 'Add Balance'}
+                </button>
+                <button 
+                  type="button" 
+                  className="admin-btn admin-btn-secondary" 
+                  onClick={() => { setDemoBalanceModal(null); setDemoAmount(''); }} 
+                  style={{ flex: 1 }}>
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

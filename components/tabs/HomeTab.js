@@ -81,12 +81,13 @@ export default function HomeTab({ balance, activePlans, userProfile, setNotifOpe
         </div>
 
         {/* Action Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${userProfile && ['admin', 'ADMIN', 'SUPERADMIN'].includes(userProfile.role) ? 4 : 3}, 1fr)`, gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(4, 1fr)`, gap: '10px' }}>
           {[
             { href: '/deposit',  Icon: Download, bg: '#F39C12', label: 'Deposit'  },
             { href: '/withdraw', Icon: Upload,   bg: '#22c55e', label: 'Withdraw' },
+            { href: '/demo',     Icon: Zap,      bg: '#26D0CE', label: 'Demo'     },
             { href: '/earn',     Icon: Gift,     bg: '#F5B041', label: 'Promo'    },
-            { href: '/admin',    Icon: Shield,   bg: '#F39C12', label: 'Admin', adminOnly: true },
+            { href: '/admin',    Icon: Shield,   bg: '#e74c3c', label: 'Admin', adminOnly: true },
           ].filter(item => !item.adminOnly || (userProfile && ['admin', 'ADMIN', 'SUPERADMIN'].includes(userProfile.role))).map(({ href, Icon, bg, label }) => (
             <Link key={label} href={href} style={{ textDecoration: 'none' }}>
               <div className="clicky" style={{ background: 'var(--bg-card)', borderRadius: '18px', border: '1px solid var(--border)', padding: '14px 4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>

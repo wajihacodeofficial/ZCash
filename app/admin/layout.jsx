@@ -153,6 +153,23 @@ const NAV_ITEMS = [
         ),
       },
       {
+        name: 'Demo Plans',
+        path: '/admin/demo-plans',
+        exact: false,
+        short: 'Demo Plans',
+        icon: (
+          <svg
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+            <path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+          </svg>
+        ),
+      },
+      {
         name: 'Messages',
         path: '/admin/messages',
         exact: false,
@@ -241,6 +258,7 @@ const PAGE_TITLES = {
   '/admin/deposits': 'Deposits',
   '/admin/withdrawals': 'Withdrawals',
   '/admin/plans': 'Investment Plans',
+  '/admin/demo-plans': 'Demo Investment Plans',
   '/admin/transactions': 'Master Ledger',
   '/admin/proofs': 'Payment Proofs',
   '/admin/messages': 'Messages',
